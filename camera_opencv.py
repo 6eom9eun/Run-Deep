@@ -101,7 +101,13 @@ class CVThread(threading.Thread):
                 cv2.putText(imgInput,'Face Detecting',(40,60), CVThread.font, 0.5,(255,255,255),1,cv2.LINE_AA)
             for (x,y,w,h) in self.faces:
                 cv2.rectangle(imgInput,(x,y),(x+w,y+h),(64,128,255),2)
-
+                if x+w/2 > 320 + 100:
+                    robot.forward(speedMove)
+                    robot.right(speedMove)
+                elif x+w/2 < 320 - 100:
+                    robot.forward(speedMove)
+                    robot.left(speedMove)
+                    
         elif self.CVMode == 'findColor':
             if self.findColorDetection:
                 cv2.putText(imgInput,'Target Detected',(40,60), CVThread.font, 0.5,(255,255,255),1,cv2.LINE_AA)
@@ -109,10 +115,15 @@ class CVThread(threading.Thread):
             else:
                 cv2.putText(imgInput,'Target Detecting',(40,60), CVThread.font, 0.5,(255,255,255),1,cv2.LINE_AA)
                 self.drawing = 0
-
+                
             if self.radius > 10 and self.drawing:
-                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)
-
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+                cv2.rectangle(imgInput,(int(self.box_x-self.radius),int(self.box_y+self.radius)),(int(self.box_x+self.radius),int(self.box_y-self.radius)),(255,255,255),1)  # 사각형 그리기
+        
         elif self.CVMode == 'findlineCV':
             if frameRender:
                 imgInput = cv2.cvtColor(imgInput, cv2.COLOR_BGR2GRAY)
@@ -315,48 +326,39 @@ class CVThread(threading.Thread):
             Y = int(self.box_y)
             error_Y = abs(240 - Y)
             error_X = abs(320 - X)
-
-            # h: 480 w: 840
-            # if self.radius < 300:
-            #     robot.buzzerCtrl(1, 0)
-            #     time.sleep(1)
-            #     robot.buzzerCtrl(0, 0)
-
-            #     #robot.foward()
-            #     #time.sleep(0.2) 
-
-            # if Y < 240 - CVThread.tor:   #axis y 
-            #     # error_Y*CVThread.aspd
-            #     robot.lookUp()
-            #     # stop motion
-            #     time.sleep(0.05)
-            #     robot.stopLR()
-            #     time.sleep(0.05)
-            #     robot.stopFB()
-            # elif Y > 240 + CVThread.tor:   #top of range
-            #     robot.lookDown()
-            #     # stop motion
-            #     time.sleep(0.05)
-            #     robot.stopLR()
-            #     time.sleep(0.05)
-            #     robot.stopFB()
-            # else:
-            #     # stop motion
-            #     time.sleep(0.05)
-            #     robot.stopLR()
-            #     time.sleep(0.05)
-            #     robot.stopFB()
-            #     Y_LOCK = 1
-
-            if sensor.distance < 0.3:
+            
+            #if int(self.radius) < 30:
+                #robot.buzzerCtrl(1, 0)
+                #time.sleep(0.2)
+                #robot.buzzerCtrl(0, 0)
+                ##robot.foward()
+                ##time.sleep(0.2)
+            
+            if Y < 240 - CVThread.tor:   #axis y 
+                # error_Y*CVThread.aspd
+                robot.lookUp()
+                # stop motion
                 time.sleep(0.05)
                 robot.stopLR()
                 time.sleep(0.05)
                 robot.stopFB()
-                
-            elif X < 220 : #320 - CVThread.tor:  # X is box's x axis, 320 is plane center 
-                #robot.lookLeft()
+            elif Y > 240 + CVThread.tor:   #top of range
+                robot.lookDown()
+                # stop motion
+                time.sleep(0.05)
+                robot.stopLR()
+                time.sleep(0.05)
                 robot.stopFB()
+            else:
+                # stop motion
+                time.sleep(0.05)
+                robot.stopLR()
+                time.sleep(0.05)
+                robot.stopFB()
+                Y_LOCK = 1
+                
+            if X < 220 : #320 - CVThread.tor:  # X is box's x axis, 320 is plane center 
+                #robot.lookLeft()
                 robot.lightCtrl('blue', 0)
                 robot.left()
                 time.sleep(0.2)
@@ -364,20 +366,11 @@ class CVThread(threading.Thread):
                 print('Turning Right')
             elif X > 420 : #320 + CVThread.tor:
                 #robot.lookRight()
-                robot.stopFB()
                 robot.lightCtrl('red', 0)
                 robot.right()
                 time.sleep(0.2)
                 #robot.stopLR()
                 print('Turning Left')
-            elif int(self.radius) < 30:
-                robot.stopLR()
-                #robot.buzzerCtrl(1, 0)
-                robot.forward()
-                time.sleep(0.2)
-                #robot.buzzerCtrl(0, 0)
-                #robot.foward()
-                #time.sleep(0.2) 
 
             else:
                 X_LOCK = 1
@@ -402,11 +395,11 @@ class CVThread(threading.Thread):
                 robot.stopLR()
                 time.sleep(0.05)
                 robot.stopFB()
-                robot.lightCtrl('magenta', 0)
-
+                robot.lightCtrl('magenta', 0) 
         else:
             self.findColorDetection = 0
         self.pause()
+
 
     def faceDetectCV(self, frame_image):
         grayGen = cv2.cvtColor(frame_image, cv2.COLOR_BGR2GRAY)
@@ -597,25 +590,43 @@ def commandAct(act, inputA):
         robot.stopFB()
     elif act == 'TS':
         robot.stopLR()
-
     elif 'wsB' in act:
         speedMove = int(act.split()[1])
         if(speedMove > 1 and speedMove <= 100):
             robot.speedSet(speedMove)
-
+            
     elif act == 'up':
-        robot.lookUp()
+        #robot.ok()
+        for i in range(1,14):
+            robot.lookUp()
+        time.sleep(2)
+        for i in range(1,14):
+            robot.lookDown()
+        robot.steadyMode()
     elif act == 'down':
-        robot.lookDown()
+        robot.stayLow()
+        robot.steadyMode()
     elif act == 'UDstop':
         robot.lookStopUD()
     elif act == 'lookleft':
-        robot.lookLeft()
+        for i in range(1,7):
+            robot.lookLeft()
+        time.sleep(0.5)
+        for shakeTimes in range(1,3):
+            for r in range(1,14):
+                robot.lookRight()
+            time.sleep(0.5)
+            for l in range(1,14):
+                robot.lookLeft()
+            time.sleep(0.5)
+        for i in range(1, 7):
+            robot.lookRight()
+            robot.steadyMode()
     elif act == 'lookright':
-        robot.lookRight()
+        robot.jump()
+        robot.steadyMode()
     elif act == 'LRstop':
         robot.lookStopLR()
-
     elif act == 'jump':
         robot.jump()
     elif act == 'handshake':
