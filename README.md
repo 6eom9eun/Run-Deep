@@ -7,8 +7,8 @@ WAVEGO, 12-DOF Bionic Dog-Like Robot
 # SOFTWARE
 
 # Languages
-C/C++/html
-Python3
++ C/C++/html
++ Python3
 
 # Arduino
 [WAVEGO wiki](https://www.waveshare.com/wiki/WAVEGO)
