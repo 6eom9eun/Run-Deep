@@ -3,6 +3,7 @@ CBNU: Huro
 ---
 
 # HARDWARE
+WAVEGO, 12-DOF Bionic Dog-Like Robot
 
 # SOFTWARE
 
