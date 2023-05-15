@@ -2,10 +2,11 @@
 CBNU: Huro
 ---
 # HARDWARE
-WAVEGO, 12-DOF Bionic Dog-Like Robot
++ WAVEGO, 12-DOF Bionic Dog-Like Robot
 
 # SOFTWARE
-Sublime, Arduino IDE
++ Sublime
++ Arduino IDE
 
 # Languages
 + C/C++/html
